@@ -378,11 +378,11 @@ PPCC图可以用来求分布最符合的形状参数$\lambda$ ，结果如上：
 
 由于在PPCC图中我们得到了关于暗场图像的分布形状参数，也就是shape_param_max，即shape_param_max = $\lambda = 0.164$ ，所以也就得到了形状参数为0.164的Tukey lambda分布来估计暗场图像的分布，标定完后续就可以用这个分布来建立数据集。
 
-![Tukey Lambda Probability Plot](相机噪声标定/Tukey Lambda Probability Plot.png)
+<img src="相机噪声标定/Tukey Lambda Probability Plot.png" alt="Tukey Lambda Probability Plot" style="zoom:67%;" />
 
 用形状参数$\lambda = 0.164$ 的分布来拟合发现和正态分布的Probability Plot拟合程度$R^2$区别不大，所以读出噪声可以近似为正态分布；关于Tukey Lambda分布的拟合情况请看下图（这里Tukey Lambda分布的参数$\lambda$ 我取的是-0.14，即原论文中佳能EOS70D的参数来进行对比）：
 
-![Tukey Lambda Probability Plot（2）](相机噪声标定/Tukey Lambda Probability Plot（2）.png)
+<img src="相机噪声标定/Tukey Lambda Probability Plot（2）.png" alt="Tukey Lambda Probability Plot" style="zoom:67%;" />
 
 可以发现佳能M50的读出噪声对Tukey Lambda的分布拟合情况并不好，不如正态分布；不过发现在噪声极少的情况下（曝光时间30s，ISO为200），读出噪声更符合Tukey Lambda的分布，原因可能是当噪声变多后分布符合大数定律的原则。
 
