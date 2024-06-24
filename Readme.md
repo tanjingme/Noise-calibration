@@ -418,9 +418,8 @@ PPCC图可以用来求分布最符合的形状参数$\lambda$ ，结果如上：
 
 最后重建出来的效果如下（色调有点偏白，不过不是重建中出现的问题）：
 
-![Calibrated Noise Image](相机噪声标定/Calibrated Noise Image.png)
 
-
+<img src="相机噪声标定/Calibrated Noise Image.png" alt="Calibrated Noise Image" style="zoom:67%;" />
 
 **具体实现代码：**在文件noise_img.py中可以直观地看每一步实现的细节
 
