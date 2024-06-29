@@ -6,8 +6,8 @@ from util import color_bias_eval
 import seaborn as sns
 
 #--------------- Step 1: Data Process ---------------
-# Setup: Canon EOS M50
-# Configuration: ISO-3200  f/#: f/5.6  f:15mm 
+# Setup: IMX623
+# Configuration: ISO-3100  f/#: f/5.6  f:15mm 
 # Temperature: room temperature
 
 # index for the beginning and the end of bias frames
