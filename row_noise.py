@@ -5,15 +5,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #--------------- Step 1: Data Process ---------------
-# Setup: Canon EOS M50
-# Configuration: ISO-3200  f/#: f/5.6  f:15mm 
+# Setup: IMX623
+# Configuration: ISO-3100  f/#: f/5.6  f:15mm 
 # Temperature: room temperature
 
-# Expo: 1/4000s
+# Expo: 1/50s
 # Read & Decode raw image
-raw_img = rawpy.imread('./images/_MG_0771.CR3')
+raw_img = rawpy.imread('./images/_MG_00.CR3')
 rgb_img = raw_img.postprocess(use_camera_wb=True)
 raw_data = raw_img.raw_image.copy().astype(np.float64)
+
 
 h = raw_data.shape[0]
 w = raw_data.shape[1]

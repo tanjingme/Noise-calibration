@@ -9,11 +9,15 @@ from util import pipeline
 #--------------- Linear Regression --------------------
 # Please read ./images/README.md for details
 # index for the beginning and the end of flat-field frames
-n1 = 699
-n2 = 770
+n1 = 5122
+n2 = 5205
 # index for the beginning and the end of bias frames
-n3 = 771
-n4 = 842
+n3 = 5038
+n4 = 5121
+
+
+
+
 mu_y, sigma_y = pipeline(n1, n2)
 mu_y_dark, _ = pipeline(n3, n4)
 x = mu_y - mu_y_dark

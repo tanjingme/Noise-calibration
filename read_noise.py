@@ -14,7 +14,7 @@ from scipy.stats import tukeylambda
 
 # Expo: 1/4000s
 # Read & Decode raw image
-raw_img = rawpy.imread('./images/_MG_0771.CR3')
+raw_img = rawpy.imread('./images/_MG_00.CR3')
 raw_data = raw_img.raw_image.copy().astype(np.float64)
 
 h = raw_data.shape[0]
@@ -40,7 +40,8 @@ raw_read = raw_data - raw_row
 # Crop for small array
 raw_crop = np.zeros((200, 200))
 for i in range(200):
-    raw_crop[i][:] = raw_read[1927+i][3043+i]
+    raw_crop[i][:] = raw_read[raw_read.shape[0]-200+i][raw_read.shape[1]-200+i]
+
 
 raw_crop = raw_crop.flatten()
 # raw_crop = raw_read.flatten()
