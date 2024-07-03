@@ -27,6 +27,7 @@ if __name__=='__main__':
     args.exps=str2value(config['EXPOSURE'])
     stride=len(args.exps)*2
     ble_info=config['DARKSHADING']
+    root_path=config['OUTPUT']
     t_exp_ori = np.array(args.exps)
     for branch in ble_info:
         expo_range=ble_info[branch]['EXPO_RANGE']
@@ -40,10 +41,11 @@ if __name__=='__main__':
             # index for the beginning and the end of bias frames
             n3 = 82+(i-1)*168
             n4 = 165+(i-1)*168
-            mu_y, sigma_y = pipeline(n1, n2)
-            mu_y_dark, _ = pipeline(n3, n4)
+            mu_y, sigma_y = pipeline(n1, n2,root_path)
+            mu_y_dark, _ = pipeline(n3, n4,root_path)
             x = mu_y - mu_y_dark
             y = sigma_y
+            print(mask.shape,x.shape)
             x_ = x[mask]
             y_ = y[mask]
 

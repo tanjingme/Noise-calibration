@@ -24,19 +24,21 @@ def ImgRead(imgpath_0, imgpath_1):
     
     return var_y, mu_y
 
-def pipeline(n1, n2):
+def pipeline(n1, n2,root_path=None):
     """ 
     Process pipeline 
     n1: index for the beginning of pipelibe
     n2: index for the end of pipeline
     """
+    if root_path is None:
+        root_path="images"
     n = int((n2 - n1 + 1) / 2)
     mu_list = []
     sigma_y = []  # Note that sigma_y here denotes sigma_y square for simplicity
     
     for i in range(n):
-        imgpath_0 = os.path.join('./images', '_MG_0{}.CR3'.format(i * 2 + n1))
-        imgpath_1 = os.path.join('./images', '_MG_0{}.CR3'.format(i * 2 + n1 + 1))
+        imgpath_0 = os.path.join(root_path, '_MG_0{}.CR3'.format(i * 2 + n1))
+        imgpath_1 = os.path.join(root_path, '_MG_0{}.CR3'.format(i * 2 + n1 + 1))
         var_y, mu_y = ImgRead(imgpath_0, imgpath_1)
         mu_list.append(mu_y)
         sigma_y.append(var_y)
