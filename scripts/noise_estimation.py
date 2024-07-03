@@ -51,12 +51,12 @@ def rggb2bayer(rggb):
     return rggb.reshape(H, W, 2, 2).transpose(0, 2, 1, 3).reshape(H*2, W*2)
 
 
-def get_darkshading(args,iso,ble, save=True):
+def get_darkshading(args,iso,save=True):
     log(f'getting darkshading of ISO-{iso}', log='./ds_naive.log')
     darkframe_file = os.path.join(args["BIAS_ROOT"], f"darkframe-iso-{iso}.npz")
 
-    raw_seq=load(darkframe_file)['data'].astype(np.float32)-args['BLACK_LEVEL']-ble
-    print(ble,iso,'=========================')
+    raw_seq=load(darkframe_file)['data'].astype(np.float32)-args['BLACK_LEVEL']
+    # print(ble,iso,'=========================')
 
     # plt.imshow(bayer2rggb(raw_seq)[0,:,:,3])
     # plt.show()
@@ -120,7 +120,7 @@ def get_darkshading(args,iso,ble, save=True):
 #         B_l.append(B_bias)
 #     return np.mean(np.array(R_l)), np.mean(np.array(G1_l)), np.mean(np.array(G2_l)), np.mean(np.array(B_l))
 
-def estimate_noise_param(config,iso,darkshading,ble):
+def estimate_noise_param(config,iso,darkshading):
     dst_dir=config['NOISE_PARAM_OUTPUT']
     if os.path.exists(f'{dst_dir}/noiseparam-iso-{iso}.h5'):
         return
@@ -150,7 +150,7 @@ def estimate_noise_param(config,iso,darkshading,ble):
 
     pbar = tqdm(range(len(raw_seq)))
     for i in pbar:
-        raw = raw_seq[i].astype(np.float32)-config['BLACK_LEVEL']-darkshading-ble
+        raw = raw_seq[i].astype(np.float32)-config['BLACK_LEVEL']-darkshading
 
         packed_raw = bayer2rggb(raw)
         R_bias = np.mean(packed_raw[:,:,0])
@@ -263,7 +263,7 @@ def save_params(data, save_path='iso_parts_params_SonyA7S2.txt'):
     else:
         f=open(save_path, "a+")
         print("cam_noisy_params['ISO_%d_%d'] = {"%(data['ISO_start'], data['ISO_end']), file=f)
-        print("    'Kmin':%.5f, 'Kmax':%.5f, 'lam':%.3f, q':%.3e, 'wp':%d, 'bl':%d,"%(data['Kmin'], data['Kmax'], data['lam'], data['q'], data['wp'],data['bl']), file=f)
+        print("    'Kmin':%.5f, 'Kmax':%.5f, 'lam':%.3f, 'q':%.3e, 'wp':%d, 'bl':%d,"%(data['Kmin'], data['Kmax'], data['lam'], data['q'], data['wp'],data['bl']), file=f)
         print("    'sigRk':%.5f,  'sigRb':%.5f,  'sigRsig':%.5f,"%(data['sigRk'], data['sigRb'], data['sigRsig']), file=f)
         print("    'sigTLk':%.5f, 'sigTLb':%.5f, 'sigTLsig':%.5f,"%(data['sigTLk'], data['sigTLb'], data['sigTLsig']), file=f)
         print("    'sigGsk':%.5f, 'sigGsb':%.5f, 'sigGssig':%.5f,"%(data['sigGsk'], data['sigGsb'], data['sigGssig']), file=f)
@@ -274,16 +274,29 @@ import rawpy
 # def load(path):
 #     i=int(int(path.split("-")[-1].replace(".npz",""))/100)
 #     n3 = 82+(i-1)*168
-#     data1=rawpy.imread(f"images/_MG_0{n3+19*2}.CR3").raw_image.copy().astype(np.float32)
-#     data2=rawpy.imread(f"images/_MG_0{n3+19*2+1}.CR3").raw_image.copy().astype(np.float32)
-#     h,w=data2.shape
+#     n4 = 165+(i-1)*168
+#     n = int((n4 - n3 + 1) / 2)
+#     # t_exp=[1/4000, 1/3200, 1/2500, 1/2000, 1/1600, 1/1250, 1/1000, 1/800, 1/640, 1/500, 1/400, 1/320, 1/250, 1/200, 1/160, 1/125, 1/100, 1/80, 1/60, 1/50, 1/40, 1/30, 1/25, 1/20, 1/15, 1/13, 1/10, 1/8, 1/6, 1/5, 1/4, 1/3, 0.4, 0.5, 0.6, 0.8,1.0,1.2,1.4,1.6,1.8,2.0]
+#     # for i in range(n):
+#     #     print(i,t_exp[i])
+#     # exit(0)
+#     k=19
+
+#     data1=rawpy.imread(f"images/_MG_0{k * 2 + n3}.CR3").raw_image.copy().astype(np.float32)
+#     data2=rawpy.imread(f"images/_MG_0{k * 2 + n3+1}.CR3").raw_image.copy().astype(np.float32)
+#     # plt.subplot(2,1,1)
+#     # plt.imshow(data1)
+#     # plt.subplot(2,1,2)
+#     # plt.imshow(data2)
+#     # plt.show()
+#     # h,w=data2.shape
 
 
-#     data1[0:70,810:960]=np.flip(data1[0:70,(w-960):(w-810)],axis=1)
-#     data1[130:310,80:400]=np.flip(data1[130:310,(w-400):(w-80)],axis=1)
+#     # data1[0:70,810:960]=np.flip(data1[0:70,(w-960):(w-810)],axis=1)
+#     # data1[130:310,80:400]=np.flip(data1[130:310,(w-400):(w-80)],axis=1)
 
-#     data2[0:70,810:960]=np.flip(data2[0:70,(w-960):(w-810)],axis=1)
-#     data2[130:310,80:400]=np.flip(data2[130:310,(w-400):(w-80)],axis=1)
+#     # data2[0:70,810:960]=np.flip(data2[0:70,(w-960):(w-810)],axis=1)
+#     # data2[130:310,80:400]=np.flip(data2[130:310,(w-400):(w-80)],axis=1)
 
 
 
@@ -512,10 +525,10 @@ def get_darkshading_templet(args, legal_iso=[], hint='', denoised=False):
         BLE[iso] = ds_mean[i]
     with open(os.path.join(args['DARKSHADING_OUTPUT'], f'darkshading{hint_dn}_BLE.pkl'), 'wb') as f:
         pkl.dump(BLE, f)
-    return BLE
+    # return BLE
 
 import pickle
-def read_darkshading(iso, exp=20, naive=False, num=None, remake=True,ds_dir="./darkshading",darkshading={}):
+def read_darkshading(iso, exp=20, naive=True, num=None, remake=True,ds_dir="./darkshading",darkshading={}):
     branch = '_highISO' if iso>1400 else '_lowISO'
     if iso not in darkshading or remake is True:
         ds_path = os.path.join(ds_dir, f'darkshading-iso-{iso}.npy')
@@ -543,6 +556,41 @@ def read_darkshading(iso, exp=20, naive=False, num=None, remake=True,ds_dir="./d
         BLE = kt(iso) * exp
         return darkshading[iso] + BLE
 
+def show_noise_profile(path,color_bias,config):
+    with open(path) as f:
+        content=f.read()
+    from collections import OrderedDict
+    cam_noisy_params=OrderedDict()
+    exec(content)
+    for i,key in enumerate(cam_noisy_params):
+        info=cam_noisy_params[key]
+        if i==0:
+            print(f"      #{key}")
+            print(f"      Kmin: {info['Kmin']}")
+            print(f"      Kmax: {info['Kmax']}")
+            print(f"      Row:")
+            print(f"        slope: {info['sigRk']}")
+            print(f"        bias: {info['sigRb']}")
+            print(f"        sigma: {info['sigRsig']}")
+            print(f"      Gaussian:")
+            print(f"        slope: {info['sigGsk']}")
+            print(f"        bias: {info['sigGsb']}")
+            print(f"        sigma: {info['sigGssig']}")
+            print(f"      TukeyLambda:")
+            print(f"        slope: {info['sigTLk']}")
+            print(f"        bias: {info['sigTLb']}")
+            print(f"        sigma: {info['sigTLsig']}")
+            print(f"        lambda: [")
+        else:
+            info=cam_noisy_params[key]
+            print(f"        {info['lam']}, #{key}")
+
+    print("        ]")
+    print(f"      ColorBias: {color_bias}")
+    print("")
+    print(f"#this noise profile is based on {config['BITS']}-bit noisy raw image, only valid for generating virtual noisy raw image using {config['BITS']}-bit clean raw image!")
+    print(f"#you can also using other bit clean raw image only if you scale it to {config['BITS']}-bit!")
+
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Example script using argparse')
@@ -553,41 +601,26 @@ if __name__=='__main__':
     dst_dir=config['DARKSHADING_OUTPUT']
     expo=config['BIAS_EXPO']
     ble_info=config['DARKSHADING']
-    blc_mean={}
-    for branch in ble_info:
-        ble_param=np.array(ble_info[branch]['PARAM'])
-        blc_mean[f'kt{branch}']=ble_param[[0,1]]/1000
+
 
     os.makedirs(dst_dir,exist_ok=True)
     os.makedirs(config['NOISE_PARAM_OUTPUT'],exist_ok=True)
 
     for branch in ble_info:
-        ble_param=np.array(ble_info[branch]['PARAM'])#.reshape(-1,4)
-        ble_fn=Dark_Mu(ble_param,config['BLACK_LEVEL'])
-
         for iso in  ble_info[branch]['ISO']:
             os.makedirs(dst_dir, exist_ok=True)
-            ble=ble_fn(iso,expo).astype(np.float32)
             if not os.path.exists(f'{dst_dir}/darkshading-iso-{iso}.npy'):
-                
-                darkshading, bad_points = get_darkshading(config,iso,ble,save=True)
+                darkshading, bad_points = get_darkshading(config,iso,save=True)
             else:
                 darkshading = np.load(f'{dst_dir}/darkshading-iso-{iso}.npy')
                 bad_points = np.load(f'{dst_dir}/bpc-iso-{iso}.npy')
 
-            estimate_noise_param(config,iso,darkshading,ble)
+            estimate_noise_param(config,iso,darkshading)
 
-
-        BLE=get_darkshading_templet(config, ble_info[branch]['ISO'], branch)
-
+        get_darkshading_templet(config, ble_info[branch]['ISO'], branch)
         get_darkshading_templet(config, ble_info[branch]['ISO'], branch, denoised=True)
-        for iso in BLE:
-            blc_mean[f'{iso}']={'b':BLE[iso]+ble_param[2]*iso+ble_param[3]-config['BLACK_LEVEL']}
-
-        params,color_bias=analysis_data(config,param_dir=config['NOISE_PARAM_OUTPUT'], K_ISO=ble_info[branch]['K_ISO'], isos=ble_info[branch]['ISO'],title=f"Noise Profile{branch}",save_dir="iso_parts_params_Custom.txt")
-
-        print(color_bias)
-
-    with open(os.path.join(dst_dir, f'BLE_t.pkl'),'wb') as f:
-        pkl.dump(blc_mean,f)
-    
+        profile_path="iso_parts_params_Custom.txt"
+        if os.path.exists(profile_path):
+            os.remove(profile_path)
+        params,color_bias=analysis_data(config,param_dir=config['NOISE_PARAM_OUTPUT'], K_ISO=ble_info[branch]['K_ISO'], isos=ble_info[branch]['ISO'],title=f"Noise Profile{branch}",save_dir=profile_path)
+        show_noise_profile(profile_path,color_bias,config)

@@ -1,2 +1,2 @@
 export PYTHONPATH=`pwd`
-python scripts/black_level_analysis.py
+python scripts/noise_calibration.py  -config config/IMX623.yaml
