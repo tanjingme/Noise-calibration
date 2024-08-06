@@ -36,11 +36,11 @@ if __name__=='__main__':
         for iso in  ble_info[branch]['ISO']:
             i=iso//100
             print(f"iso:{iso}")
-            n1 = 166+(i-1)*168
-            n2 = 249+(i-1)*168
+            n1 = 2*stride-2+(i-1)*2*stride
+            n2 = 3*stride-3+(i-1)*2*stride
             # index for the beginning and the end of bias frames
-            n3 = 82+(i-1)*168
-            n4 = 165+(i-1)*168
+            n3 = stride-2+(i-1)*2*stride
+            n4 = 2*stride-3+(i-1)*2*stride
             mu_y, sigma_y = pipeline(n1, n2,root_path)
             mu_y_dark, _ = pipeline(n3, n4,root_path)
             x = mu_y - mu_y_dark
